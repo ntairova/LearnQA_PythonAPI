@@ -15,4 +15,4 @@ time.sleep(obj_st["seconds"])
 
 response2 = requests.get("https://playground.learnqa.ru/ajax/api/longtime_job", params = {"token" : tn})
 obj = response2.json()
-print(obj["result"]["status"])
+print(obj["result"], obj["status"])
