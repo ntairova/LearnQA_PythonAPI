@@ -1,7 +1,7 @@
 import requests
 
 
-passwords = ('password password 123456 123456 123456 123456 123456 123456 123456'
+pwds = ('password password 123456 123456 123456 123456 123456 123456 123456'
 '123456 123456 password password password password password password 123456789'
 '12345678 12345678 12345678 12345 12345678 12345 12345678 123456789 qwerty'
 'qwerty abc123 qwerty 12345678 qwerty 12345678 qwerty 12345678 password'
@@ -26,16 +26,17 @@ passwords = ('password password 123456 123456 123456 123456 123456 123456 123456
 'qazwsx ninja azerty 123123 solo loveme whatever donald dragon'
 'michael mustang trustno1 batman passw0rd zaq1zaq1 qazwsx password1 password1'
 'Football password1 000000 trustno1 starwars password1 trustno1 qwerty123 123qwe'
-             )
+        )
 
-password = passwords.split(' ')
-all_password = []
-for word in password:   #задаем список паролей, убирая дубликаты
-    if word not in all_password:
-        all_password.append(word)
 
-for word in range(len(all_password)): #первый вызов перебирая пароли по очереди из списка
-    payload = {"login": "super_admin", "password": all_password[word]}
+pwd = pwds.split(' ')
+all_pwds = []
+for word in pwd:   #задаем список паролей, убирая дубликаты
+    if word not in all_pwds:
+        all_pwds.append(word)
+
+for word in range(len(all_pwds)): #первый вызов перебирая пароли по очереди из списка
+    payload = {"login": "super_admin", "password": all_pwds[word]}
     response = requests.post('https://playground.learnqa.ru/ajax/api/get_secret_password_homework', data=payload)
 
     cookie_value = response.cookies.get('auth_cookie')
@@ -45,6 +46,6 @@ for word in range(len(all_password)): #первый вызов перебира�
     if response1.text == "You are NOT authorized":
         continue
     else:
-        print(response1.text, all_password[word], sep = '\n')
+        print(response1.text, all_pwds[word], sep ='\n')
         break
 
