@@ -25,6 +25,6 @@ class TestHeaders:
         platform_from_response = response.json()["platform"]
         browser_from_response = response.json()["browser"]
         device_from_response = response.json()["device"]
-        print(platform_from_response, browser_from_response, device_from_response)
+        #print(platform_from_response, browser_from_response, device_from_response)
         assert platform_from_response == value["platform"] and browser_from_response == value["browser"] and device_from_response == value["device"], f"error  for {header}"
 
