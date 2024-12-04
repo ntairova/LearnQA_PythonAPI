@@ -96,7 +96,7 @@ class TestUserRegister(BaseCase):
 
     # Создание пользователя без указания одного из полей - с помощью @parametrize необходимо проверить, что отсутствие любого параметра не дает зарегистрировать пользователя
     @pytest.mark.parametrize('condition', exclude_params)
-    def test_test(self, condition):
+    def test_with_excluded_param(self, condition):
         if condition == "username":
             response = requests.post("https://playground.learnqa.ru/api/user/", data={
             'password': '123',
