@@ -14,21 +14,8 @@ class TestUserRegister(BaseCase):
                       ("email"),
                       ]
 
-    def setup_method(self):
-        base_part ="learnqa"
-        domain = "example.com"
-        random_part = datetime.now().strftime("%m%d%Y%H%M%S")
-        self.email = f"{base_part}{random_part}@{domain}"
-
     def test_create_user_successfully(self):
-        data = {
-            'password': '123',
-            'username': 'learnqa',
-            'firstName':'learnqa',
-            'lastName': 'learnqa',
-            'email': self.email
-        }
-
+        data = self.prepare_registration_data()
         response = requests.post("https://playground.learnqa.ru/api/user/", data=data)
 
         Assertions.assert_code_status(response, 200)
@@ -36,14 +23,7 @@ class TestUserRegister(BaseCase):
 
     def test_create_user_with_existing_email(self):
          email = 'vinkotov@example.com'
-         data = {
-             'password': '123',
-             'username': 'learnqa',
-             'firstName':'learnqa',
-             'lastName': 'learnqa',
-             'email': email
-         }
-
+         data = self.prepare_registration_data(email)
          response = requests.post("https://playground.learnqa.ru/api/user/", data=data)
 
          Assertions.assert_code_status(response, 400)
@@ -52,14 +32,7 @@ class TestUserRegister(BaseCase):
 
     def test_create_user_with_invalid_email(self): # Создание пользователя с некорректным email - без символа @
         email = 'vinkotovexample.com'
-        data = {
-            'password': '123',
-            'username': 'learnqa',
-            'firstName': 'learnqa',
-            'lastName': 'learnqa',
-            'email': email
-        }
-
+        data = self.prepare_registration_data(email)
         response = requests.post("https://playground.learnqa.ru/api/user/", data=data)
 
         Assertions.assert_code_status(response, 400)
@@ -67,14 +40,9 @@ class TestUserRegister(BaseCase):
             f"Unexpected response content {response.content}"
 
     def test_create_user_with_short_username(self):  # Создание пользователя с очень коротким именем в один символ
-        data = {
-            'password': '123',
-            'username': 'l',
-            'firstName':'learnqa',
-            'lastName': 'learnqa',
-            'email': self.email
-        }
-
+        new_value = 'l'
+        data = self.prepare_registration_data()
+        data['username'] = new_value
         response = requests.post("https://playground.learnqa.ru/api/user/", data=data)
 
         Assertions.assert_code_status(response, 400)
@@ -82,13 +50,9 @@ class TestUserRegister(BaseCase):
             f"Unexpected response content {response.content}"
 
     def test_create_user_with_long_username(self):  # Создание пользователя с очень длинным именем - длиннее 250 символов
-        data = {
-            'password': '123',
-            'username': 'learnqa123'*25,
-            'firstName':'learnqa',
-            'lastName': 'learnqa',
-            'email': self.email
-        }
+        new_value = 'learnqa123'*25
+        data = self.prepare_registration_data()
+        data['username'] = new_value
         response = requests.post("https://playground.learnqa.ru/api/user/", data=data)
 
         Assertions.assert_code_status(response, 200)
@@ -96,42 +60,19 @@ class TestUserRegister(BaseCase):
 
     # Создание пользователя без указания одного из полей - с помощью @parametrize необходимо проверить, что отсутствие любого параметра не дает зарегистрировать пользователя
     @pytest.mark.parametrize('condition', exclude_params)
-    def test_test(self, condition):
+    def test_with_excluded_param(self, condition):
+        data = self.prepare_registration_data()
         if condition == "username":
-            response = requests.post("https://playground.learnqa.ru/api/user/", data={
-            'password': '123',
-            'firstName': 'learnqa',
-            'lastName': 'learnqa',
-            'email': self.email
-            })
+            del data['username']
         elif condition == "firstName":
-            response = requests.post("https://playground.learnqa.ru/api/user/", data={
-                'password': '123',
-                'username': 'learnqa',
-                'lastName': 'learnqa',
-                'email': self.email
-            })
+            del data['firstName']
         elif condition == "lastName":
-            response = requests.post("https://playground.learnqa.ru/api/user/", data={
-                'password': '123',
-                'username': 'learnqa',
-                'firstName': 'learnqa',
-                'email': self.email
-            })
+            del data['lastName']
         elif condition == "password":
-            response = requests.post("https://playground.learnqa.ru/api/user/", data={
-                'username': 'learnqa',
-                'firstName': 'learnqa',
-                'lastName': 'learnqa',
-                'email': self.email
-            })
+            del data['password']
         else:
-            response = requests.post("https://playground.learnqa.ru/api/user/", data={
-                'username': 'learnqa',
-                'firstName': 'learnqa',
-                'lastName': 'learnqa',
-                'password': '1234'
-            })
+            del data['email']
+        response = requests.post("https://playground.learnqa.ru/api/user/", data=data)
 
         Assertions.assert_code_status(response, 400)
         assert response.content.decode("utf-8") == f"The following required params are missed: {condition}", \
