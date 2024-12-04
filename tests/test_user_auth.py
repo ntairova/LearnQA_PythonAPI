@@ -42,11 +42,13 @@ class TestUserAuth(BaseCase):
                 "https://playground.learnqa.ru/api/user/auth",
                     headers={"x-csrf-token":self.token}
             )
+            print(response2.content)
         else:
             response2 = requests.get(
                 "https://playground.learnqa.ru/api/user/auth",
                 cookies={"auth_sid":self.auth_sid}
             )
+            print(response2.content)
 
         Assertions.assert_json_value_by_name(
             response2,
