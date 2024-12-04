@@ -13,7 +13,13 @@ class TestUserRegister(BaseCase):
         domain = "example.com"
         random_part = datetime.now().strftime("%m%d%Y%H%M%S")
         self.email = f"{base_part}{random_part}@{domain}"
-        return self.email
+        self.values = [({'username': 'learnqa', 'firstName': 'learnqa', 'lastName': 'learnqa', 'email': self.email}),
+                  ({'password': '123', 'firstName': 'learnqa', 'lastName': 'learnqa', 'email': self.email}),
+                  ({'password': '123', 'username': 'l', 'lastName': 'learnqa', 'email': self.email}),
+                  ({'password': '123', 'username': 'l', 'firstName': 'learnqa', 'email': self.email}),
+                  ({'password': '123', 'username': 'l', 'firstName': 'learnqa', 'lastName': self.email})
+                  ]
+
 
 
     def test_create_user_successfully(self):
@@ -91,14 +97,9 @@ class TestUserRegister(BaseCase):
 
     # Создание пользователя без указания одного из полей - с помощью @parametrize необходимо проверить, что отсутствие любого параметра не дает зарегистрировать пользователя
 
-    values = [({'username': 'learnqa', 'firstName': 'learnqa', 'lastName': 'learnqa','email': 'test1@test.com'}),
-            ({'password': '123', 'firstName': 'learnqa', 'lastName': 'learnqa','email': 'test2@test.com'}),
-            ({'password': '123','username': 'l', 'lastName': 'learnqa','email': 'test3@test.com'}),
-            ({'password': '123','username': 'l', 'firstName': 'learnqa','email': 'test4@test.com'}),
-            ({'password': '123', 'username': 'l', 'firstName': 'learnqa', 'lastName': 'learnqa'})
-            ]
 
-    @pytest.mark.parametrize('value', values)
+
+    @pytest.mark.parametrize('value', self.values)
     def test_test(self, value):
         response = requests.post("https://playground.learnqa.ru/api/user/", data=value)
         print('asdadadasd')
