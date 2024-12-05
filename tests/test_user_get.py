@@ -1,3 +1,4 @@
+import allure
 import requests
 from requests import Response
 
@@ -7,6 +8,7 @@ from lib.my_requests import MyRequests
 
 
 class TestUserGet(BaseCase):
+    @allure.description("This test checks that only USERNAME is returned if user is not authorized")
     def test_get_user_details_not_auth(self):
         response = MyRequests.get("/user/2")
         Assertions.assert_json_has_key(response, 'username')
@@ -14,6 +16,7 @@ class TestUserGet(BaseCase):
         Assertions.assert_json_has_not_key(response, 'lastName')
         Assertions.assert_json_has_not_key(response, 'email')
 
+    @allure.description("This test checks that user data is returned if user is authorized")
     def test_get_user_details_auth_as_same_user(self):
         data = {'email':'vinkotov@example.com',
                'password':'1234'}
@@ -31,8 +34,9 @@ class TestUserGet(BaseCase):
 
         expected_fields = ["username", "firstName", "lastName", "email"]
         Assertions.assert_json_has_keys(response2, expected_fields)
-    #Homework Ex16: Запрос данных другого пользователя
-    def test_get_user_details_auth_as_another_user(self):
+
+    @allure.description("This test checks that authorized user can NOT receive data of another user, except username")
+    def test_get_user_details_auth_as_another_user(self):    #Homework Ex16: Запрос данных другого пользователя
         #create new user
         username_not_auth_user = 'Unauth User Name'
         data = self.prepare_registration_data()
