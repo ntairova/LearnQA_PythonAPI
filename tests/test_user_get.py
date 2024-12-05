@@ -29,6 +29,45 @@ class TestUserGet(BaseCase):
 
         expected_fields = ["username", "firstName", "lastName", "email"]
         Assertions.assert_json_has_keys(response2, expected_fields)
+    #Homework Ex16: Запрос данных другого пользователя
+    def test_get_user_details_auth_as_another_user(self):
+        #create new user
+        username_not_auth_user = 'Unauth User Name'
+        data = self.prepare_registration_data()
+        data['username'] = username_not_auth_user
+        response1 =  requests.post("https://playground.learnqa.ru/api/user/", data=data)
+
+        Assertions.assert_code_status(response1, 200)
+        Assertions.assert_json_has_key(response1,"id")
+        user_id_from_create_user_method = self.get_json_value(response1, "id")
+
+        #login as existing user vinkotov@example.com
+        data = {'email':'vinkotov@example.com',
+               'password':'1234'}
+        response2 = requests.post("https://playground.learnqa.ru/api/user/login", data=data)
+
+        auth_sid = self.get_cookie(response2, "auth_sid")
+        token = self.get_header(response2, "x-csrf-token")
+
+        #try to get details for new_created user logged as another user:vinkotov@example.com
+        response3 = requests.get(f"https://playground.learnqa.ru/api/user/{user_id_from_create_user_method}",
+                                 headers={"x-csrf-token": token},
+                                 cookies={"auth_sid": auth_sid}
+                                 )
+
+        Assertions.assert_json_has_key(response3, 'username')
+        Assertions.assert_json_has_not_key(response3, 'firstName')
+        Assertions.assert_json_has_not_key(response3, 'lastName')
+        Assertions.assert_json_has_not_key(response3, 'email')
+        Assertions.assert_json_value_by_name(
+            response3,
+            "username",
+            username_not_auth_user,
+            'Wrong username'
+        )
+
+
+
 
 
 
