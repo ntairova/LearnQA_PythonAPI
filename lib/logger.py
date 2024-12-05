@@ -37,7 +37,7 @@ class Logger:
         data_to_add += f"Response test: {response.text}\n"
         data_to_add += f"Response headers: {headers_as_dict}\n"
         data_to_add += f"Response cookies: {cookies_as_dict}\n"
-        data_to_add += "\n-----n"
+        data_to_add += "\n-----\n"
 
         cls._write_to_log_file(data_to_add)
 
