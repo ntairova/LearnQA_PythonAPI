@@ -125,6 +125,7 @@ class TestUserEdit(BaseCase):
              "error"
              "Please, do not edit test users with ID 1, 2, 3, 4 or 5.",
              f"Wrong response {response3.content}"
+         )
 
      @allure.description("This test checks email format validation in edit action")
      def test_user_edit_update_email_to_invalid_email_format(self): #Попытаемся изменить email пользователя, будучи авторизованными тем же пользователем, на новый email без символа @
