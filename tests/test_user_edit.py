@@ -12,6 +12,7 @@ class TestUserEdit(BaseCase):
          register_data = self.prepare_registration_data()
          response1 =  MyRequests.post("/user/", data=register_data)
 
+
          Assertions.assert_code_status(response1, 200)
          Assertions.assert_json_has_key(response1,"id")
 
@@ -122,7 +123,7 @@ class TestUserEdit(BaseCase):
          Assertions.assert_code_status(response3, 400)
          Assertions.assert_json_value_by_name(
              response3,
-             "error"
+             "error",
              "Please, do not edit test users with ID 1, 2, 3, 4 or 5.",
              f"Wrong response {response3.content}"
          )
