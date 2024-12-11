@@ -76,7 +76,6 @@ class TestUserDelete(BaseCase):
         #create 2nd user
         second_user_data = self.prepare_registration_data()
         response2 = MyRequests.post("/user/", data=second_user_data)
-        second_user_id = self.get_json_value(response2, "id")
 
         Assertions.assert_code_status(response2, 200)
         Assertions.assert_json_has_key(response2, "id")
@@ -94,6 +93,7 @@ class TestUserDelete(BaseCase):
 
         auth_sid = self.get_cookie(response3, "auth_sid")
         token = self.get_header(response3, "x-csrf-token")
+        print(response3.status_code)
 
         #delete
         response4 = MyRequests.delete(
@@ -109,4 +109,3 @@ class TestUserDelete(BaseCase):
              "This user can only delete their own account.",
              f"Wrong response {response4.content}"
         )
-

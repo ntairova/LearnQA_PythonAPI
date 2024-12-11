@@ -89,43 +89,54 @@ class TestUserEdit(BaseCase):
      @allure.description("This test checks that authorized user can not edit another user")
      def test_edit_new_created_user_authorized_by_another_user(self): #- Попытаемся изменить данные пользователя, будучи авторизованными другим пользователем
          # Register
-         register_data = self.prepare_registration_data()
-         response1 = MyRequests.post("/user/", data=register_data)
+         # create 1st user
+         data_user_for_edit = self.prepare_registration_data()
+         response1 = MyRequests.post("/user/", data=data_user_for_edit)
+         user_id_for_edit = self.get_json_value(response1, "id")
 
          Assertions.assert_code_status(response1, 200)
          Assertions.assert_json_has_key(response1, "id")
 
-         email = register_data['email']
-         username = register_data['username']
-         first_name = register_data['firstName']
-         password = register_data['password']
-         user_id = self.get_json_value(response1, "id")
+         # create 2nd user
+         auth_user_data = self.prepare_registration_data()
+         response2 = MyRequests.post("/user/", data=auth_user_data)
 
-         # login as existing user vinkotov@example.com
-         data = {'email': 'vinkotov@example.com',
-                 'password': '1234'}
-         response2 = MyRequests.post("/user/login", data=data)
+         Assertions.assert_code_status(response2, 200)
+         Assertions.assert_json_has_key(response2, "id")
 
-         auth_sid = self.get_cookie(response2, "auth_sid")
-         token = self.get_header(response2, "x-csrf-token")
+         email = auth_user_data['email']
+         password = auth_user_data['password']
 
-         # try to edit new created user logged as another user (vinkotov@example.com)
+         # login as 2nd user
+         data = {
+             'email': email,
+             'password': password
+         }
+
+         response3 = MyRequests.post("/user/login", data=data)
+
+         auth_sid = self.get_cookie(response3, "auth_sid")
+         token = self.get_header(response3, "x-csrf-token")
+         print(response3.status_code)
+
+         # try to edit new created user logged as another user
          new_email = "test@test.com"
          new_username = "Changed userame"
          new_firstname = "Changed Name"
-         response3 = MyRequests.put(
-             f"/user/{user_id}",
+         response4 = MyRequests.put(
+             f"/user/{user_id_for_edit}",
              cookies={"auth_sid":auth_sid},
              headers={"x-csrf-token":token},
              data={"firstName": new_firstname, "username": new_username, "email": new_email}
              )
 
-         Assertions.assert_code_status(response3, 400)
+         Assertions.assert_code_status(response4, 400)
+         print(response4.content)
          Assertions.assert_json_value_by_name(
-             response3,
+             response4,
              "error",
-             "Please, do not edit test users with ID 1, 2, 3, 4 or 5.",
-             f"Wrong response {response3.content}"
+             "This user can only edit their own data.",
+             f"Wrong response {response4.content}"
          )
 
      @allure.description("This test checks email format validation in edit action")
@@ -205,7 +216,6 @@ class TestUserEdit(BaseCase):
              "The value for field `username` is too short",
              f"Wrong response {response3.content}"
          )
-
 
 
 
