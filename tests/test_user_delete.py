@@ -1,9 +1,12 @@
+import allure
+
 from lib.assertions import Assertions
 from lib.base_case import BaseCase
 from lib.my_requests import MyRequests
 
 
 class TestUserDelete(BaseCase):
+    @allure.description("This test checks that admin user can not be deleted")
     def test_delete_user_with_userId_equal_2(self):
         data = {
             'email': 'vinkotov@example.com',
@@ -29,6 +32,7 @@ class TestUserDelete(BaseCase):
             f"Wrong response {response2.content}"
         )
 
+    @allure.description("This test checks that auth user can be deleted")
     def test_delete_new_authorized_user(self):
         #create user
         data = self.prepare_registration_data()
@@ -64,6 +68,7 @@ class TestUserDelete(BaseCase):
         assert response4.content.decode("utf-8") == f"User not found", \
             f"Unexpected response content {response4.content}"
 
+    @allure.description("This test checks that authorized user can not delete another user")
     def test_delete_new_created_user_authorized_by_another_user(self):
         # create 1st user
         data_1st_user = self.prepare_registration_data()
@@ -93,7 +98,6 @@ class TestUserDelete(BaseCase):
 
         auth_sid = self.get_cookie(response3, "auth_sid")
         token = self.get_header(response3, "x-csrf-token")
-        print(response3.status_code)
 
         #delete
         response4 = MyRequests.delete(

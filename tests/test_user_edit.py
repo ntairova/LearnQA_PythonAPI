@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import allure
 import requests
 from lib.base_case import BaseCase
@@ -120,7 +122,8 @@ class TestUserEdit(BaseCase):
          print(response3.status_code)
 
          # try to edit new created user logged as another user
-         new_email = "test@test.com"
+         random_part = datetime.now().strftime("%m%d%Y%H%M%S")
+         new_email = f"test{random_part}@test.com"
          new_username = "Changed userame"
          new_firstname = "Changed Name"
          response4 = MyRequests.put(
@@ -131,10 +134,9 @@ class TestUserEdit(BaseCase):
              )
 
          Assertions.assert_code_status(response4, 400)
-         print(response4.content)
          Assertions.assert_json_value_by_name(
              response4,
-             "error",
+           "error",
              "This user can only edit their own data.",
              f"Wrong response {response4.content}"
          )

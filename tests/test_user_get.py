@@ -48,14 +48,14 @@ class TestUserGet(BaseCase):
         Assertions.assert_json_has_key(response1, "id")
 
         # create 2nd user
-        auth_user_data = self.prepare_registration_data()
-        response2 = MyRequests.post("/user/", data=auth_user_data)
+        auth_user2_data = self.prepare_registration_data()
+        response2 = MyRequests.post("/user/", data=auth_user2_data)
 
         Assertions.assert_code_status(response2, 200)
         Assertions.assert_json_has_key(response2, "id")
 
-        email = auth_user_data['email']
-        password = auth_user_data['password']
+        email = auth_user2_data['email']
+        password = auth_user2_data['password']
 
         # login as 2nd user
         data = {
