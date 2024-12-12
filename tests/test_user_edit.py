@@ -122,7 +122,7 @@ class TestUserEdit(BaseCase):
          print(response3.status_code)
 
          # try to edit new created user logged as another user
-         random_part = datetime.now().strftime("%m%d%Y%H%M%S")
+         random_part = datetime.now().strftime("%m%d%Y%H%M%S.%f")
          new_email = f"test{random_part}@test.com"
          new_username = "Changed userame"
          new_firstname = "Changed Name"
