@@ -2,7 +2,7 @@ from datetime import datetime
 
 import allure
 import requests
-from allure_commons._allure import step
+from allure_commons._allure import step, severity
 
 from lib.base_case import BaseCase
 from lib.assertions import Assertions
@@ -97,7 +97,7 @@ class TestUserEdit(BaseCase):
              )
 
      @allure.description("This test checks that authorized user can not edit another user")
-     @allure.severity("High")
+     @allure.severity(severity_level='critical')
      def test_edit_new_created_user_authorized_by_another_user(self): #- Попытаемся изменить данные пользователя, будучи авторизованными другим пользователем
          # Register
          with allure.step("Create first new user"):

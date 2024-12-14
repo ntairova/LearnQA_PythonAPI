@@ -80,7 +80,7 @@ class TestUserDelete(BaseCase):
                 f"Unexpected response content {response4.content}"
 
     @allure.description("This test checks that authorized user can not delete another user")
-    @allure.severity("High")
+    @allure.severity(severity_level='critical')
     def test_delete_new_created_user_authorized_by_another_user(self):
         with allure.step("Step1 - Create first user"):
             # create 1st user
